@@ -1,38 +1,53 @@
-const fs = require('fs')
+const { CommandoClient } = require('discord.js-commando');
+const { Structures } = require('discord.js');
 
-const Discord = require('discord.js');
-const Client = require('./client/Client');
+const path = require('path');
 
 const { 
     prefix, 
     token 
 } = require('./config');
 
-const client = new Client();
-client.commands = new Discord.Collection();
+Structures.extend('Guild', function(Guild) {
+	class MusicGuild extends Guild {
+	  constructor(client, data) {
+		super(client, data);
+		this.musicData = {
+		  queue: [],
+		  isPlaying: false,
+		  nowPlaying: null,
+		  songDispatcher: null,
+		  volume: 1
+		};
+	  }
+	}
+
+	return MusicGuild;
+});
+
+const client = new CommandoClient({
+	commandPrefix: prefix
+});
+
 client.login(token);
 
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+client.registry
+  .registerDefaultTypes()
+  .registerGroups([
+    ['music', 'Music Command Group']
+  ])
+  .registerDefaultGroups()
+  .registerDefaultCommands({
+    eval: false,
+    prefix: false,
+    commandState: false
+  })
+  .registerCommandsIn(path.join(__dirname, 'commands'));
 
-for (const file of commandFiles) {
-	const command = require(`./commands/${file}`);
-	client.commands.set(command.name, command);
-}
-
-console.log(client.commands);
-
-client.on('message', async message => {
-	const args = message.content.slice(prefix.length).split(/ +/);
-	const commandName = args.shift().toLowerCase();
-	const command = client.commands.get(commandName);
-
-	if (message.author.bot) return;
-	if (!message.content.startsWith(prefix)) return;
-
-	try {
-        command.execute(message);
-	} catch (error) {
-		console.error(error);
-		message.reply('There was an error trying to execute that command.');
-	}
+client.once('ready', () => {
+	console.log('Ready!');
+	client.user.setActivity(`${prefix}help`, {
+	  type: 'WATCHING',
+	  url: 'https://github.com/monjasa/clef-bot'
+	});
 });
