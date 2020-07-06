@@ -68,14 +68,14 @@ module.exports = class PlayCommand extends Command {
             message.guild.musicData.songDispatcher = dispatcher;
             dispatcher.setVolume(message.guild.musicData.volume);
 
-            const videoEmbed = new MessageEmbed()
+            const videoMessageEmbed = new MessageEmbed()
               .setThumbnail(queue[0].thumbnail)
               .setColor('#e67f22')
               .addField('Now Playing:', queue[0].title)
               .addField('Duration:', queue[0].duration);
-            if (queue[1]) videoEmbed.addField('Next Song:', queue[1].title);
+            if (queue[1]) videoMessageEmbed.addField('Next Song:', queue[1].title);
 
-            message.say(videoEmbed);
+            message.say(videoMessageEmbed);
             message.guild.musicData.nowPlaying = queue[0];
             return queue.shift();
           })

@@ -7,7 +7,7 @@ module.exports = class StopCommand extends Command {
 			aliases: ['skipall'],
 			memberName: 'stop',
 			group: 'music',
-			description: 'Skip all songs in queue',
+			description: 'Skip all songs within the queue',
 			guildOnly: true
 		});
 	}
