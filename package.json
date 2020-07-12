@@ -1,6 +1,6 @@
 {
   "name": "clef",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "description": "Discord Music Bot",
   "main": "index.js",
   "scripts": {
